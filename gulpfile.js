@@ -12,7 +12,8 @@ var gulp    = require('gulp'),                 //基础库
     server = tinylr(),
     connect = require('gulp-connect'),
     livereload = require('gulp-livereload'),   //livereload
-    $ = require('gulp-load-plugins')();
+    $ = require('gulp-load-plugins')(),
+    sourcemaps = require('gulp-sourcemaps');
 
 var path = require('path');
 
@@ -127,28 +128,66 @@ gulp.task('scripts:vendor', ['scripts:modernizr', 'scripts:ui:template'], functi
     .pipe($.size());
 });
 
-// Scripts Browserify
-gulp.task('scripts:browserify', function () {
-  gulp.src(['src/scripts/*.js'])
-    // .pipe($.plumber({errorHandler: handler}))
-    // .pipe($.browserify({debug: true}))
-    // .pipe($.plumber.stop())
-    //.pipe($.ngmin())
-    //.pipe($.uglify())
-    //.pipe($.sourcemaps.write())
-    .pipe(gulp.dest('.tmp/scripts'))
-    // .pipe($.size())
-    .pipe(connect.reload());
+// // Scripts Browserify
+// gulp.task('scripts:browserify', function () {
+//   gulp.src(['src/scripts/*.js'])
+//     // .pipe($.plumber({errorHandler: handler}))
+//     // .pipe($.browserify({debug: true}))
+//     // .pipe($.plumber.stop())
+//     //.pipe($.ngmin())
+//     //.pipe($.uglify())
+//     //.pipe($.sourcemaps.write())
+//     .pipe(gulp.dest('.tmp/scripts'))
+//     // .pipe($.size())
+//     .pipe(connect.reload());
+// });
+
+// 压缩js
+gulp.task('scripts:minifyjs', function() {
+    return gulp.src('src/scripts/*.js')
+        .pipe($.sourcemaps.init())
+        .pipe($.concat('main.js'))
+        .pipe(rename({suffix: '.min'}))   //rename压缩后的文件名
+        .pipe(uglify())    //压缩
+        .pipe($.sourcemaps.write('/', {
+          sourceRoot: '/src/scripts/',
+          sourceMappingURL: function(file) {
+            return file.relative + '.map';
+          }
+        }))
+        // .pipe(sourcemaps.write())
+        // .pipe(sourcemaps.write('/', {
+        //   sourceMappingURL: function(file) {
+        //     // return file.relative + '.map';
+        //   }
+        // }))
+        .pipe(gulp.dest('src/scripts/minified'))  //输出
+        .pipe(connect.reload());
 });
+// gulp.task('scripts:minifyjs', function() {
+//     return gulp.src('src/scripts/bugLog.js')
+//         .pipe(concat('main.js'))    //合并所有js到main.js
+//         .pipe(gulp.dest('src/scripts/minified'))    //输出main.js到文件夹
+//         .pipe(rename({suffix: '.min'}))   //rename压缩后的文件名
+//         .pipe(uglify())    //压缩
+//         .pipe(sourcemaps.init())
+//         .pipe(sourcemaps.write('/', {
+//           sourceMappingURL: function(file) {
+//             return file.relative + '.map';
+//           }
+//         }))
+//         .pipe(gulp.dest('src/scripts/minified'))  //输出
+//         .pipe(connect.reload());
+// });
 
 // Scripts
-gulp.task('scripts', ['scripts:vendor', 'scripts:browserify']);
+gulp.task('scripts', ['scripts:vendor', 'scripts:browserify', 'scripts:minifyjs']);
 
 //创建watch任务去检测html文件,其定义了当html改动之后，去调用一个Gulp的Task
 gulp.task('watch', function () {
   gulp.watch(['src/**/*.html'], ['html']);
   gulp.watch('src/styles/*.less', ['less']) //当所有less文件发生改变时，调用less任务
-  gulp.watch(['src/scripts/**/*.js'], ['scripts:browserify']);
+  gulp.watch(['src/scripts/**/*.js'], ['scripts:minifyjs']);
 });
 
 // Build Assets
@@ -189,6 +228,8 @@ gulp.task('build:scripts', ['scripts:vendor', 'build:templates'], function () {
     .pipe($.size());
 });
 
+
+
 // Build Images
 gulp.task('build:images', function () {
   return gulp.src(['src/styles/images/**/*'])
@@ -202,7 +243,7 @@ gulp.task('build:images', function () {
 });
 
 // Build Html
-gulp.task('build:html', ['build:assets', 'build:fonts', 'build:styles', 'build:scripts', 'build:images'], function () {
+gulp.task('build:html', ['build:assets', 'build:fonts', 'build:styles', 'build:scripts', 'build:images', 'minifyjs'], function () {
   var assets = $.useref.assets({
       searchPath: ['.tmp', 'public']
   });

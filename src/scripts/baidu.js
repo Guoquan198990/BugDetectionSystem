@@ -875,8 +875,11 @@
     }
     ;
 
-    console.log(H);
-
+    
+    // console.log(H);
+    $('aa').clicks(function(params) {
+        
+    });
 
 })();
 

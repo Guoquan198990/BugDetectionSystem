@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>bug 监测日志</title>
-  <link rel="stylesheet" href="" />
+    <title>bug 监测日志</title>
+    <link rel="stylesheet" href="../styles/css/base.css" />
+    <!--<script>
+        var _bugLog = _bugLog || [];
+        (function() {
+            var sourceMapScript = document.createElement("script");
+            var bugLogScript = document.createElement("script");
+            sourceMapScript.src = "../scripts/bugLog/sourceMap.js";
+            bugLogScript.src = "../scripts/bugLog/bugLog.js";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(sourceMapScript, s);
+            s.parentNode.insertBefore(bugLogScript, s);
+        })();
+    </script>-->
+    <!--<script src="../scripts/globalVarsDetector.js"></script>-->
 </head>
 <body>
-  <h1>bug 监测日志</h1>
-  <script src="../public/components/jquery/dist/jquery.min.js"></script>
-  <script src="../scripts/baidu.js"></script>
+    <div class="container">
+        <h1>bug 监测日志</h1>
+        <img src="1.jpg" alt="" />
+        <img src="2.jpg" alt="" />
+    </div>
+    <!--<script src="../scripts/bugLog/require.js" defer async="true" data-main="/scripts/bugLog/bugLog"></script>-->
+    <script src="../scripts/bugLog/sourceMap.js"></script>
+    <script src="../scripts/bugLog/bugLog.js"></script>
+    <script src="../public/components/jquery/jquery.min.js"></script>
+    <!--<script src="../public/components/timing-js/timing.min.js"></script>-->
+    <!--<script src="../scripts/bugLog.js"></script>-->
+    <script src="../scripts/minified/main.min.js"></script>
+    <!--<script src="../scripts/bugLog.js"></script>-->
 </body>
 </html>
